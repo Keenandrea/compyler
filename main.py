@@ -1,36 +1,63 @@
 import sys
 import os
+import errno
 import string
 
-def fval(fin):
-	fin = fin + ".fs19" 
+import testScanner
+
+
+def validate_file(fin):
+	import os.path
+	base, ext = os.path.splitext(fin)
+	if ext != '.fs19': 
+		fin = fin + ".fs19" 
 	try:
-		fp = open(fin)
-		try:
-			fp.read()
-		except IOError:
-			print "Error: Cannot read {}.".format(fp.name)
-			fp.close()
-		finally:
-			print "{} read successfully...".format(fp.name)
-			print "Closing {} handler...".format(fp.name)
-			fp.close()
-	except IOError:
-		print "Error: Cannot find {}.".format(fin)
-		print "Exiting {}...".format(sys.argv[0])
-		sys.exit(1)
-		
+		with open(fin) as f:
+			data = f.read()
+			print 'Reading', len(data), 'bytes.'
+			return data
+	except IOError as x:
+		if x.errno == errno.ENOENT:
+			print 'Error: Cannot find', fin
+			print 'Exiting...', sys.argv[0] 
+			sys.exit(1)
+		elif x.errno == errno.EACCES:
+			print 'Error: Cannot read', fin
+			print 'Exiting...', sys.argv[0]
+			sys.exit(1)
+		elif x.errno == errno.EFBIG:
+			print 'Error:', fin, ' too big'
+			print 'Exiting...', sys.argv[0]
+			sys.exit(1)
+
+def usage_message():
+	print "Error: Program invocation unaccepted."
+	print "Please invoke using one of the three:"
+	print "Usage: $[program]"
+	print "Usage: $[program] [somefile]"
+	print "Usage: $[program] < [somefile].fs19"
+
 def main():
 
 	if len(sys.argv) > 2:
-		print "Error: Invocation of {} for {} is invalid.".format(str(sys.argv), sys.argv[0])
-		print "Usage"
+		usage_message()
 		sys.exit(2)
 	if len(sys.argv) == 1:
-		cin = str(raw_input())
-		print cin
+		try:
+			with open('cin.fs19', 'w+') as f:
+				f.write(raw_input())
+				cin = f.name
+		except IOError as x:
+			if x.errno == errno.EACCES:
+				print 'Error: Cannot write file'
+				print 'Exiting...', sys.argv[0]
+				sys.exit(1) 
+
+		data = validate_file(str(cin))
+		#test_driver(data)
 	if len(sys.argv) == 2:
-		fval(str(sys.argv[1]))
+		data = validate_file(str(sys.argv[1]))
+		#test_driver(data)
 		
 if __name__ == "__main__":
 	main()

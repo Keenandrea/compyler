@@ -1,5 +1,5 @@
-import token
-
+import utils
+import tokens
 token_strings = [
     'START_tk',
     'STOP_tk',
@@ -39,3 +39,13 @@ token_strings = [
     'EOF_tk',
     'ERROR_tk',
 ]
+
+# def test_driver(data):
+t = tokens.Token(tokens.token_identities.token_names[4], 'VAR_tok', 1)
+print t.tokenIdentity
+# prints VAR_tk
+print t.tokenInstance
+# prints VAR_tok 
+print t.tokenLocation
+# prints 1
+
