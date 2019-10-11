@@ -40,8 +40,9 @@ def main():
 		usage_message()
 		sys.exit(2)
 	if len(sys.argv) == 1:
-		print 'Enter file data' 
+		print 'Enter file data by keyboard input' 
 		print '[Ctrl-D | Ctlr-Z + Enter] to save'
+		print 'Disregard if invoking redirection'
 		data = sys.stdin.read()
 		try:
 			with open('cin.fs19', 'w+') as f:

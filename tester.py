@@ -48,18 +48,6 @@ def tester(fn):
     n = 1
 
     while True:
-        t = scanner.filter(fn, n)
+        t = scanner.driver(fn, n)
         if t.tokenIdentity == tokens.token_ids.token_names[36]: break
         print "%s,'%s',%d" % (t.identity, t.instance, t.location)
-
-    
-
-
-# t = tokens.Token(tokens.token_identities.token_names[4], 'VAR_tok', 1)
-# print t.tokenIdentity
-# # prints VAR_tk
-# print t.tokenInstance
-# # prints VAR_tok 
-# print t.tokenLocation
-# # prints 1
-

@@ -1,8 +1,8 @@
-import re, sys
+import os, sys
 import tokens
 import tester
 
-"""              ws    lc     d     =     <     >    <=    >=    ==     :     +     -     *     /     %     .     (     )     ,     {     }     ;     [     ]   eof    uc  """
+"""              ws     c     d     =     <     >    <=    >=    ==     :     +     -     *     /     %     .     (     )     ,     {     }     ;     [     ]   eof    up    """
 fsa_table = [ [   0,    1,    2,    3,    4,    5,    6,    7,    8,    9,   10,   11,   12,   13,   14,   15,   16,   17,   18,   19,   20,   21,   22,   23,   -1,   -2],
               [1000,    1,    1, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,    1], # id
               [1001, 1001,    2, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001, 1001], # int
@@ -71,56 +71,69 @@ keywords = {
     'let'     : 'LET_tk',
 }
 
-operators_and_delimiters = {
-    2  : '=',
-    3  : '<',
-    4  : '>',
-    5  : '<=',
-    6  : '>=',
-    7  : '==',
-    8  : ':',
-    9  : '+',
-    10 : '-',
-    11 : '*',
-    12 : '/',
-    13 : '%',
-    14 : '.',
-    15 : '(',
-    16 : ')',
-    17 : ',',
-    18 : '{',
-    19 : '}',
-    20 : ';',
-    21 : '[',
-    22 : ']',
+symbols = {
+    '='  : 2,
+    '<'  : 3,
+    '>'  : 4,
+    '<=' : 5,
+    '>=' : 6,
+    '==' : 7,
+    ':'  : 8,
+    '+'  : 9,
+    '-'  : 10,
+    '*'  : 11,
+    '/'  : 12,
+    '%'  : 13,
+    '.'  : 14,
+    '('  : 15,
+    ')'  : 16,
+    ','  : 17,
+    '{'  : 18,
+    '}'  : 19,
+    ';'  : 20,
+    '['  : 21,
+    ']'  : 22,
 }
 
+def get_tokens(state, lexe, lineno):
+    state_token = tokens.Token()
+    s_value = final_states.get(state)
+    k_value = keywords.get(lexe)
+    if s_value != None:
+        state_token.identity = s_value
+        state_token.instance = lexe
+        state_token.location = lineno
+    if k_value != None:
+        state_token.identity = k_value
+    return state_token
+
+def get_symbol(datum):
+    value = symbols.get(datum)
+    if value == None:
+        return -2
+    else:
+        return value 
 
 def get_column(datum):
     if datum.isalpha():
         if datum.isupper():
-            return 22
+            return 25
         return 1
+    elif datum.isdigit():
+        return 2
+    elif datum.isspace():
+        return 0
+    else:
+        get_symbol(datum)
 
-
-
-def driver(datum, lineno):
-    active_state = 0
-    future_state = 0
-    unit = ' '
-    word = ""
-    while active_state < 1000 and active_state > -1:
-        fsa_column = get_column(datum)
-        print 'bye'
-        sys.exit(1)
-        
 
 def filter(fn, lineno):
     with open(fn) as fp:
         while True:
             datum = fp.read(1)
+            return datum, lineno
             if not datum:
-                print "%s,'%s',%d" % ('EOF_tk','EOF',lineno)
+                print "%s,'%s',%d" % (tokens.token_ids.token_names[35],'eof',lineno)
             elif datum == '\n':
                 lineno += lineno
             elif datum == '#':
@@ -129,18 +142,48 @@ def filter(fn, lineno):
                     if datum == '\n':
                         lineno += lineno
                         break
-            else:
-                driver(datum, lineno)
+
+def driver(fn, lineno):
+    active_state = 0
+    future_state = 0
+    unit = ' '
+    lexe = ""
+    with open(fn) as fp:
+        while True:
+            datum = fp.read(1)
+            return datum, lineno
+            if not datum:
+                print "%s,'%s',%d" % (tokens.token_ids.token_names[35],'eof',lineno)
+            elif datum == '\n':
+                lineno += lineno
+            elif datum == '#':
+                while True:
+                    datum = fp.read(1)
+                    if datum == '\n':
+                        lineno += lineno
+                        break
+    while active_state < 1000 and active_state > -1:
 
 
-# def t_error(t):
-#     print "Line %d." % (t.location,) + "",
-#     if t.instance[0] == '"':
-#         print "Unterminated string literal."
-#         if t.instance.count('\n') > 0:
-#             t.skip(t.instance.index('\n'))
-#     elif t.instance[0:1] == '#':
-#         print "Unterminated comment."
-#     else:
-#         print "Illegal character '%s'" % t.instance[0]
-#         t.skip(1)
+        fsa_column = get_column(datum)
+        if fsa_column == -2:
+            print "SCANNER ERROR: Illegal character '%s' on line %d" % (datum,lineno) 
+            return tokens.Token(tokens.token_ids.token_names[36],'bad token',lineno)
+        future_state = fsa_table[active_state][fsa_column]
+        print future_state
+
+        if future_state >= 1000 or future_state == -1 or future_state == -2:
+            if future_state == -1:
+                return tokens.Token(tokens.token_ids.token_names[35],'eof',lineno)
+            if future_state == -2:
+                print "SCANNER ERROR: Illegal character '%s' on line %d" % (datum,lineno) 
+                return tokens.Token(tokens.token_ids.token_names[36],'illegal ID',lineno)
+            return get_tokens(future_state, lexe, lineno)
+        else:
+            if unit.isspace() == False:
+                lexe += unit
+            if len(lexe) > 7:
+                print "SCANNER ERROR: Illegal keyword '%s' on line %d" % (lexe,lineno) 
+                return tokens.Token(tokens.token_ids.token_names[36],'illegal size',lineno)
+            active_state = future_state
+    return tokens.Token(tokens.token_ids.token_names[36],'scanner failed to return token',lineno)
