@@ -1,6 +1,6 @@
 from utils import enum
 
-token_identities = enum(
+token_ids = enum(
     'START_tk',
     'STOP_tk',
     'ITER_tk',
@@ -41,42 +41,42 @@ token_identities = enum(
 )
 
 class Token(object):
-    def __init__(self, tokenIdentity = None, tokenInstance = None, tokenLocation = 1):
-        self._tokenIdentity = tokenIdentity
-        self._tokenInstance = tokenInstance
-        self._tokenLocation = tokenLocation
+    def __init__(self, identity = None, instance = None, location = 1):
+        self._identity = identity
+        self._instance = instance
+        self._location = location
 
     @property
-    def tokenIdentity(self):
-        return self._tokenIdentity
+    def identity(self):
+        return self._identity
     
     @property
-    def tokenInstance(self):
-        return self._tokenInstance
+    def instance(self):
+        return self._instance
 
     @property
-    def tokenLocation(self):
-        return self._tokenLocation
+    def location(self):
+        return self._location
 
-    @tokenIdentity.setter
-    def tokenIdentity(self, tpid):
-        self._tokenIdentity = tpid
+    @identity.setter
+    def identity(self, tpid):
+        self._identity = tpid
 
-    @tokenInstance.setter
-    def tokenInstance(self, tstr):
-        self._tokenInstance = tstr
+    @instance.setter
+    def instance(self, tstr):
+        self._instance = tstr
 
-    @tokenLocation.setter
-    def tokenLocation(self, tloc):
-        self._tokenLocation = tloc
+    @location.setter
+    def location(self, tloc):
+        self._location = tloc
 
-t = Token(token_identities.token_names[4], 'VAR_tok', 1)
-print t.tokenIdentity
-# prints VAR_tk
-print t.tokenInstance
-# prints VAR_tok 
-print t.tokenLocation
-# prints 1
+# t = Token(token_identities.token_names[4], 'VAR_tok', 1)
+# print t.identity
+# # prints VAR_tk
+# print t.instance
+# # prints VAR_tok 
+# print t.location
+# # prints 1
 
 
 

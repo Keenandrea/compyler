@@ -3,8 +3,7 @@ import os
 import errno
 import string
 
-import testScanner
-
+import tester
 
 def validate_file(fin):
 	import os.path
@@ -13,9 +12,7 @@ def validate_file(fin):
 		fin = fin + ".fs19" 
 	try:
 		with open(fin) as f:
-			data = f.read()
-			print 'Reading', len(data), 'bytes.'
-			return data
+			return fin
 	except IOError as x:
 		if x.errno == errno.ENOENT:
 			print 'Error: Cannot find', fin
@@ -43,21 +40,23 @@ def main():
 		usage_message()
 		sys.exit(2)
 	if len(sys.argv) == 1:
+		print 'Enter file data' 
+		print '[Ctrl-D | Ctlr-Z + Enter] to save'
+		data = sys.stdin.read()
 		try:
 			with open('cin.fs19', 'w+') as f:
-				f.write(raw_input())
+				f.write(data)
 				cin = f.name
 		except IOError as x:
 			if x.errno == errno.EACCES:
 				print 'Error: Cannot write file'
 				print 'Exiting...', sys.argv[0]
-				sys.exit(1) 
-
-		data = validate_file(str(cin))
-		#test_driver(data)
+				sys.exit(1) 				
+		filename = validate_file(str(cin))
+		tester.tester(filename)
 	if len(sys.argv) == 2:
-		data = validate_file(str(sys.argv[1]))
-		#test_driver(data)
+		filename = validate_file(str(sys.argv[1]))
+		tester.tester(filename)
 		
 if __name__ == "__main__":
 	main()

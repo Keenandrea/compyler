@@ -1,3 +1,7 @@
+import re, sys
+import tokens
+import tester
+
 """              ws    lc     d     =     <     >    <=    >=    ==     :     +     -     *     /     %     .     (     )     ,     {     }     ;     [     ]   eof    uc  """
 fsa_table = [ [   0,    1,    2,    3,    4,    5,    6,    7,    8,    9,   10,   11,   12,   13,   14,   15,   16,   17,   18,   19,   20,   21,   22,   23,   -1,   -2],
               [1000,    1,    1, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,    1], # id
@@ -91,3 +95,52 @@ operators_and_delimiters = {
     22 : ']',
 }
 
+
+def get_column(datum):
+    if datum.isalpha():
+        if datum.isupper():
+            return 22
+        return 1
+
+
+
+def driver(datum, lineno):
+    active_state = 0
+    future_state = 0
+    unit = ' '
+    word = ""
+    while active_state < 1000 and active_state > -1:
+        fsa_column = get_column(datum)
+        print 'bye'
+        sys.exit(1)
+        
+
+def filter(fn, lineno):
+    with open(fn) as fp:
+        while True:
+            datum = fp.read(1)
+            if not datum:
+                print "%s,'%s',%d" % ('EOF_tk','EOF',lineno)
+            elif datum == '\n':
+                lineno += lineno
+            elif datum == '#':
+                while True:
+                    datum = fp.read(1)
+                    if datum == '\n':
+                        lineno += lineno
+                        break
+            else:
+                driver(datum, lineno)
+
+
+# def t_error(t):
+#     print "Line %d." % (t.location,) + "",
+#     if t.instance[0] == '"':
+#         print "Unterminated string literal."
+#         if t.instance.count('\n') > 0:
+#             t.skip(t.instance.index('\n'))
+#     elif t.instance[0:1] == '#':
+#         print "Unterminated comment."
+#     else:
+#         print "Illegal character '%s'" % t.instance[0]
+#         t.skip(1)
