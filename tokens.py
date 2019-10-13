@@ -69,14 +69,3 @@ class Token(object):
     @location.setter
     def location(self, tloc):
         self._location = tloc
-
-# t = Token(token_identities.token_names[4], 'VAR_tok', 1)
-# print t.identity
-# # prints VAR_tk
-# print t.instance
-# # prints VAR_tok 
-# print t.location
-# # prints 1
-
-
-

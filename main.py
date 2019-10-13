@@ -35,18 +35,13 @@ def usage_message():
 	print "Usage: $[program] < [somefile].fs19"
 
 def main():
-
 	if len(sys.argv) > 2:
 		usage_message()
 		sys.exit(2)
 	if len(sys.argv) == 1:
-		print 'Enter file data by keyboard input' 
-		print '[Ctrl-D | Ctlr-Z + Enter] to save'
-		print 'Disregard if invoking redirection'
-		data = sys.stdin.read()
 		try:
 			with open('cin.fs19', 'w+') as f:
-				f.write(data)
+				f.write(raw_input())
 				cin = f.name
 		except IOError as x:
 			if x.errno == errno.EACCES:
