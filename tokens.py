@@ -1,5 +1,11 @@
 from utils import enum
 
+# hardcoded c-lan
+# guage-esque enu
+# m rife with eve
+# ry lexeme in ou
+# r small program
+# ming language
 token_ids = enum(
     'START_tk',
     'STOP_tk',
@@ -40,6 +46,16 @@ token_ids = enum(
     'ERROR_tk',
 )
 
+# a class data struc
+# ture that builds a
+# token with three a
+# ttributes, namely:
+# token identity, to
+# ken instance, or v
+# alue of token, and 
+# the line number th
+# e token was locate
+# d on in the file
 class Token(object):
     def __init__(self, identity = None, instance = None, location = 1):
         self._identity = identity

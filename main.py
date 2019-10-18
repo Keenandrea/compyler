@@ -2,9 +2,13 @@ import sys
 import os
 import errno
 import string
-
 import tester
 
+# function checks file
+# for existance, for r
+# ead, write, and exec
+# ute permissions, and
+# validates size 
 def validate_file(fin):
 	import os.path
 	base, ext = os.path.splitext(fin)
@@ -27,6 +31,12 @@ def validate_file(fin):
 			print 'Exiting...', sys.argv[0]
 			sys.exit(1)
 
+# usage message to p
+# rogram user explai
+# ning correct progr
+# am invocation if t
+# hey happen to botc
+# t the invocation
 def usage_message():
 	print "Error: Program invocation unaccepted."
 	print "Please invoke using one of the three:"
@@ -34,6 +44,15 @@ def usage_message():
 	print "Usage: $[program] [somefile]"
 	print "Usage: $[program] < [somefile].fs19"
 
+# main function, three co
+# nditionals: (1) incorre
+# ct invocation; (2) invo
+# cation by console input
+# in which case a file wi
+# ll be created; (3) invo
+# cation by file, either
+# through redirection or
+# a direct CL referencing
 def main():
 	if len(sys.argv) > 2:
 		usage_message()
@@ -53,6 +72,7 @@ def main():
 	if len(sys.argv) == 2:
 		filename = validate_file(str(sys.argv[1]))
 		tester.tester(filename)
-		
+
+# our program's entry point		
 if __name__ == "__main__":
 	main()
